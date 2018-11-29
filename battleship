@@ -1,0 +1,151 @@
+# Battle Ship Game
+#------------------------------------------------------------------>
+
+#Imports
+import time
+#globals
+EMPTY = " "
+#welcome message
+start_game = input("""
+                                           |_
+                                       ---/ |
+                                       ___\_|__
+                                      /| o  o |
+                       ___           / |______|\          ___
+                  ====/___\  ,------,--|------|--.       /___\====
+    _________________,|- -|,/---------------------\.____,|- -|,______________
+    \                       \. . . . . . . . . . . ./                       /     , 
+ ,  \   o           o           o           o           o           o     /    ,   )',    ,     ,(
+=)'===\___________________________________________________________________/==="('=='""=='"(=='-'  ',
+
+                            Welcome To Battleship
+               <------------------------------------------------->
+                           Press Enter to Continue
+""")
+
+#Rules
+print("""Rules:
+-> Player 1 places ships.
+-> Player 2 shoots ships.
+-> Put down your battleships on the game board.
+-> Put down pieces by calling coordinates. Ex. A1, C4, B3
+-> You will be given 5 ships to put down, and the shooter will have 13 shots to shoot.
+-> Hide your pieces well. Good luck and have fun!
+""")
+
+#smooth out display
+time.sleep(1)
+
+#global lists
+possible_moves = ["A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5", "C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4", "D5", "E1", "E2", "E3", "E4", "E5"]
+board = [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY] 
+board2 = [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY]
+move_made = []
+winning_shots = []
+shots_so_far = []
+
+#game board for player 1(ship placer)
+def display_board_one():
+   print(" | 1 | 2 | 3 | 4 | 5 |")
+   print(" |___|___|___|___|___|")
+   print("A|",board[0], "|",board[1], "|",board[2], "|",board[3], "|",board[4], "|")
+   print(" |___|___|___|___|___|")
+   print("B|",board[5], "|",board[6], "|",board[7], "|",board[8], "|",board[9], "|")
+   print(" |___|___|___|___|___|")
+   print("C|",board[10],"|",board[11],"|",board[12],"|",board[13],"|",board[14],"|")
+   print(" |___|___|___|___|___|")
+   print("D|",board[15],"|",board[16],"|",board[17],"|",board[18],"|",board[19],"|")
+   print(" |___|___|___|___|___|")
+   print("E|",board[20],"|",board[21],"|",board[22],"|",board[23],"|",board[24],"|")
+   print(" |___|___|___|___|___|")
+
+#game board for player 2(ship shooter)
+def display_board_two():
+   print(" | 1 | 2 | 3 | 4 | 5 |")
+   print(" |___|___|___|___|___|")
+   print("A|",board2[0], "|",board2[1], "|",board2[2], "|",board2[3], "|",board2[4], "|")
+   print(" |___|___|___|___|___|")
+   print("B|",board2[5], "|",board2[6], "|",board2[7], "|",board2[8], "|",board2[9], "|")
+   print(" |___|___|___|___|___|")
+   print("C|",board2[10],"|",board2[11],"|",board2[12],"|",board2[13],"|",board2[14],"|")
+   print(" |___|___|___|___|___|")
+   print("D|",board2[15],"|",board2[16],"|",board2[17],"|",board2[18],"|",board2[19],"|")
+   print(" |___|___|___|___|___|")
+   print("E|",board2[20],"|",board2[21],"|",board2[22],"|",board2[23],"|",board2[24],"|")
+   print(" |___|___|___|___|___|")
+
+
+# player 1 movement (PLACING SHIPS)
+def user1_move():
+   for counter in range(0,5):
+      user_move = input("Where do you want to move? ")
+      user_move = user_move.upper()
+      move_made.append(user_move)
+      #battle_ships = position in possible_moves
+      battle_ships = possible_moves.index(user_move)
+      #insert "X" at position of the value (battle_ships)
+      board[battle_ships] = "X"
+      display_board_one()
+   #Clears Terminal by loopings message, also pauses(using input function) so player 2 can take over keyboard
+   clear_terminal = input("Press Enter to Hide board. Player 2 Will now try and shoot your ships: ")
+   for i in range (0,35):
+      print("|---------------------------------|")
+
+
+# player 2 movement (SHOOTING AT SHIPS)
+def user2_move():
+   #general tip for user
+   print("Tip:\nX = HIT")
+   print("O = NO HIT")
+   time.sleep(1)
+   #Amount of shots player 2 gets.
+   shots_left = 13
+   for i in range(0,13): 
+      #Ask Player 2 where he wants to shoot on board
+      shoot = input("Cannons are ready! Guess where Player 1's battleships are: ")
+      shoot = shoot.upper()
+      #shots fired so far are logged into a list(shots_so_far). Does the same function as battle_ships.
+      shots_so_far.append(shoot)
+      shots_board = possible_moves.index(shoot)
+      #player 2 board will display X for hit and O for miss.
+      if shoot in (move_made):
+         board2[shots_board] = "X"
+         display_board_two()
+      else:
+         board2[shots_board] = "O"
+         display_board_two()
+      #If player 2's input(shoot) is inside player 1's list(move_made) appends to list(winning_shots) as a successful shot.
+      if shoot in move_made:
+         print("Shots Made: ",shots_so_far)
+         shots_left -= 1
+         winning_shots.append(shoot)
+         print("Hit! You have", shots_left, "shots left!")
+      else:
+         shots_left -= 1
+         print("No Hit, try again. You have", shots_left, "shots left.")
+         print(shots_so_far)
+      #Compares length of list, if list are equal then player 2 wins. Ends Program.
+      if len(winning_shots) == len(move_made):
+         player_2_win()
+         return None
+   #if player 2 doesn't hit all of his/her shots, output player_1_win(). Ends Program.
+   if shots_left == 0:
+      player_1_win()
+
+#player 2 win. ends program
+def player_2_win():
+   print("Player 2 Wins! Player 2 hit all of Player 1's ships.")  
+   return None
+
+#player 1 win, ends program
+def player_1_win():
+   print("Player 1 Wins! Player 2 didn't sink all of Player 1's ships.")
+   return None
+
+#Main  
+def main():
+   display_board_one()
+   user1_move()  
+   user2_move()
+
+main()
